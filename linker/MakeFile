@@ -1,0 +1,3 @@
+all:
+	lex link.l
+	gcc lex.yy.c
