@@ -1,13 +1,15 @@
 # Compiler Design Assignment
 
 ## Introduction
-    Compiler made to convert C like code to xsm executable. xsm executable can be directly run on xsm machine(https://exposnitc.github.io/). 
+    Compiler made to convert C like code to xsm executable. 
+    xsm executable can be directly run on xsm machine(https://exposnitc.github.io/). 
 
 ## How?
 
     Source code is converted to a Tree.
 
-    Source code undergoes lexical analysis in which we detect "is program syntatically correct.". If it not then exits with error.
+    Source code undergoes lexical analysis in which we detect "is program syntatically correct.". 
+    If it not then exits with error.
     If no error , a tree is constructed with root node as program(main program). 
 
     Example
