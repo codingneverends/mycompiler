@@ -1,0 +1,9 @@
+read ( argc );
+argc = FUN ( argc ) {
+
+    if ( argc >=  90 ) {
+       argc = FUN( FUN ( argc - 11) ) ;
+    }
+    return 20 ;
+}
+write ( argc );

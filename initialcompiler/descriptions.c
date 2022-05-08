@@ -13,9 +13,6 @@ const int ifnode = 8;
 const int ifelsenode = 9;
 const int funccallnode = 10;
 const int returnnode = 11;
-const int whileloopnode = 12;
-const int dowhileloopnode = 13;
-const int forloopnode = 14;
 
 
 struct tnode* create_Number_Node(int n) {
@@ -153,40 +150,6 @@ struct tnode* create_Return_Node(struct tnode* ret){
 	return temp;
 }
 
-struct tnode* create_WhileLoop_Node(struct tnode* l_exp,struct tnode* _satements){
-	struct tnode* temp;
-	temp = (struct tnode*)malloc(sizeof(struct tnode));
-	temp->val = -1;
-	temp->op = '\0';
-	temp->type = whileloopnode;
-	temp->left = l_exp;
-	temp->right = _satements;
-	return temp;
-}
-
-struct tnode* create_DoWhileLoop_Node(struct tnode* l_exp,struct tnode* _satements){
-	struct tnode* temp;
-	temp = (struct tnode*)malloc(sizeof(struct tnode));
-	temp->val = -1;
-	temp->op = '\0';
-	temp->type = dowhileloopnode;
-	temp->left = l_exp;
-	temp->right = _satements;
-	return temp;
-}
-
-struct tnode* create_ForLoop_Node(struct tnode* ini,struct tnode* exp,struct tnode* upd,struct tnode* _satements){
-	struct tnode* temp;
-	temp = (struct tnode*)malloc(sizeof(struct tnode));
-	temp->val = -1;
-	temp->op = '\0';
-	temp->type = forloopnode;
-	temp->left = Connect_Node(ini,exp);
-	temp->right = Connect_Node(upd,_satements);
-	return temp;
-
-}
-
 int reg_index=-1;
 int Get_register(){
 	if(reg_index>19){
@@ -237,6 +200,7 @@ int GetAddressRegFromSymbolTable(struct SymbolTable *head,char *name){
 		}
 	}
 	_ptr=head;
+
 	int r0 = Get_register();
 	printf("MOV R%d,BP\n",r0);
 	if(idpos<0){
@@ -323,8 +287,8 @@ int code_Gen(struct tnode* _node,struct SymbolTable *head){
 		return -1;
 	}
 	else if(_node->type == connectnode){
-		code_Gen(_node->left,head);
-		code_Gen(_node->right,head);
+		int r0 = code_Gen(_node->left,head);
+		int r1 = code_Gen(_node->right,head);
 		return -1;
 	}
 	else if(_node->type == boolnode){
@@ -358,21 +322,21 @@ int code_Gen(struct tnode* _node,struct SymbolTable *head){
 		printf("JNZ R%d,L%d\n",r0,label1);
 		printf("JMP L%d\n",label2);
 		printf("L%d:\n",label1);
-		code_Gen(_node->right,head);
+		int _t = code_Gen(_node->right,head);
 		printf("L%d:\n",label2);
-		return -1;
+		return-1;
 	}
 	else if(_node->type == ifelsenode){
 		int r0 = code_Gen(_node->left,head);
 		int label1 = Get_Label();
 		int label2 = Get_Label();
 		printf("JNZ R%d,L%d\n",r0,label1);
-		code_Gen(_node->right->right,head);
+		int _t = code_Gen(_node->right->right,head);
 		printf("JMP L%d\n",label2);
 		printf("L%d:\n",label1);
-		code_Gen(_node->right->left,head);
+		_t = code_Gen(_node->right->left,head);
 		printf("L%d:\n",label2);
-		return -1;
+		return-1;
 	}
 	else if(_node->type==funccallnode){
 		for(int i=0;i<=reg_index;i++)
@@ -403,48 +367,13 @@ int code_Gen(struct tnode* _node,struct SymbolTable *head){
 		SymbolTable *pre=NULL;
 		for(thead = head->next;thead!=NULL;thead=thead->next){
 			printf("POP R%d\n",r1);
+			free(pre);
 			pre=thead;
 		}
 		printf("POP BP\n");
 		printf("RET\n");
 		Free_register();
-		Free_register();
-		return -1;
-	}
-	else if(_node->type==whileloopnode){
-		int label1 = Get_Label();
-		int label2 = Get_Label();
-		printf("L%d:\n",label1);
-		int r0 = code_Gen(_node->left,head);
-		printf("JZ R%d,L%d\n",r0,label2);
-		code_Gen(_node->right,head);
-		printf("JMP L%d\n",label1);
-		printf("L%d:\n",label2);
-		return -1;
-	}
-	else if(_node->type==dowhileloopnode){
-		int label1 = Get_Label();
-		int label2 = Get_Label();
-		printf("L%d:\n",label1);
-		code_Gen(_node->right,head);
-		int r0 = code_Gen(_node->left,head);
-		printf("JZ R%d,L%d\n",r0,label2);
-		printf("JMP L%d\n",label1);
-		printf("L%d:\n",label2);
-		return -1;
-	}
-	else if(_node->type==forloopnode){
-		code_Gen(_node->left->left,head);
-		int label1 = Get_Label();
-		int label2 = Get_Label();
-		printf("L%d:\n",label1);
-		int r0 = code_Gen(_node->left->right,head);
-		printf("JZ R%d,L%d\n",r0,label2);
-		code_Gen(_node->right->right,head);
-		code_Gen(_node->right->left,head);
-		printf("JMP L%d\n",label1);
-		printf("L%d:\n",label2);
-		return -1;
+		return r0;
 	}
 	printf("Nothing Satisfied\n");
 	printf("bla %d\n",_node->type);
@@ -522,8 +451,8 @@ struct tnode* InitProgram(struct tnode* stmts){
 	head->name=strdup("argc");
 	head->binding=-2;
 	CreateSymbolTable(head,stmts);
+	SymbolTable *_head=head;
 	code_Gen(stmts,head);
-	return NULL;
 }
 
 void CreateSymbolTable(struct SymbolTable *_tablehead,struct tnode* _stmts){

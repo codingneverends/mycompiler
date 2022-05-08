@@ -10,13 +10,13 @@
 %union {
 	struct tnode *node;
 }
-%type <node> Prgm Sl S InpS OpS Asgs E IfStmt IfElseStmt ReturnStmt WhileLoop DoWhileLoop ForLoop
-%token <node> Begin End NUM ID Read Write If Else While Do For gt lt ge le eq ne End_L FUN Return
+%type <node> Prgm Sl S InpS OpS Asgs E IfStmt IfElseStmt ReturnStmt
+%token <node> Begin End NUM ID Read Write If Else gt lt ge le eq ne End_L FUN Return
 %left gt lt ge le eq ne
 %left '+' '-'
 %left '*' '/'
 %%
-Prgm : Read '(' ID ')' End_L ID '=' FUN '(' ID ')' Begin Sl End Write '(' ID ')' End_L { $$=InitProgram($13); }
+Prgm : Read '(' ID ')' End_L ID '=' FUN '(' ID ')' Begin Sl End Write '(' ID ')' End_L { $$ = InitProgram($13); }
 ;
 Sl : Sl S { $$ = Connect_Node($1,$2); }
 	| S { $$ = $1; }
@@ -24,30 +24,14 @@ Sl : Sl S { $$ = Connect_Node($1,$2); }
 S : InpS End_L{ $$ = $1; }
 	| OpS End_L{ $$ = $1; }
 	| Asgs End_L{ $$ = $1; }
-	| IfElseStmt { $$ = $1;}
 	| IfStmt { $$ = $1;}
+	| IfElseStmt { $$ = $1;}
 	| ReturnStmt { $$ = $1; }
-	| WhileLoop { $$ = $1; }
-	| DoWhileLoop { $$ = $1; }
-	| ForLoop { $$ = $1; }
-;
-IfElseStmt : If '(' E ')' Begin Sl End Else Begin Sl End  { $$ = create_IfElse_Node($3,$6,$10); }
-| If '(' E ')' S Else Begin Sl End  { $$ = create_IfElse_Node($3,$5,$8); }
-| If '(' E ')' Begin Sl End Else S { $$ = create_IfElse_Node($3,$6,$9); }
-| If '(' E ')' S Else S  { $$ = create_IfElse_Node($3,$5,$7); }
-;
-WhileLoop : While '(' E ')' Begin Sl End { $$ = create_WhileLoop_Node($3,$6); }
-| While '(' E ')' S { $$ = create_WhileLoop_Node($3,$5); }
-;
-DoWhileLoop : Do Begin Sl End While '(' E ')' End_L { $$ = create_DoWhileLoop_Node($7,$3); }
-| Do S While '(' E ')' End_L { $$ = create_DoWhileLoop_Node($5,$2); }
-;
-ForLoop : For '(' S E End_L S ')' Begin Sl End { $$ = create_ForLoop_Node($3,$4,$6,$9); }
-| For '(' S E End_L S ')' S { $$ = create_ForLoop_Node($3,$4,$6,$8); }
 ;
 IfStmt : If '(' E ')' Begin Sl End { $$ = create_If_Node($3,$6); }
-| If '(' E ')' S { $$ = create_If_Node($3,$5); }
 ; 
+IfElseStmt : If '(' E ')' Begin Sl End Else Begin Sl End  { $$ = create_IfElse_Node($3,$6,$10); }
+;
 InpS : Read'('E')' { $$ = create_Read_Node($3); }
 ;
 OpS : Write'('E')' { $$ = create_Write_Node($3); }

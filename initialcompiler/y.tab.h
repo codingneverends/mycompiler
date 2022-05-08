@@ -57,18 +57,15 @@ extern int yydebug;
     Write = 263,
     If = 264,
     Else = 265,
-    While = 266,
-    Do = 267,
-    For = 268,
-    gt = 269,
-    lt = 270,
-    ge = 271,
-    le = 272,
-    eq = 273,
-    ne = 274,
-    End_L = 275,
-    FUN = 276,
-    Return = 277
+    gt = 266,
+    lt = 267,
+    ge = 268,
+    le = 269,
+    eq = 270,
+    ne = 271,
+    End_L = 272,
+    FUN = 273,
+    Return = 274
   };
 #endif
 /* Tokens.  */
@@ -80,18 +77,15 @@ extern int yydebug;
 #define Write 263
 #define If 264
 #define Else 265
-#define While 266
-#define Do 267
-#define For 268
-#define gt 269
-#define lt 270
-#define ge 271
-#define le 272
-#define eq 273
-#define ne 274
-#define End_L 275
-#define FUN 276
-#define Return 277
+#define gt 266
+#define lt 267
+#define ge 268
+#define le 269
+#define eq 270
+#define ne 271
+#define End_L 272
+#define FUN 273
+#define Return 274
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -101,7 +95,7 @@ union YYSTYPE
 
 	struct tnode *node;
 
-#line 105 "y.tab.h"
+#line 99 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

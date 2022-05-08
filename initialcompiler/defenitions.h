@@ -27,9 +27,6 @@ struct tnode* create_Func_Call_Node(struct tnode* _exp);
 struct tnode* create_Func_Def_Node(struct tnode* stmts);
 struct tnode* InitProgram(struct tnode* stmts);
 struct tnode* create_Return_Node(struct tnode* ret);	
-struct tnode* create_WhileLoop_Node(struct tnode* l_exp,struct tnode* _satements);
-struct tnode* create_DoWhileLoop_Node(struct tnode* l_exp,struct tnode* _satements);
-struct tnode* create_ForLoop_Node(struct tnode* ini,struct tnode* exp,struct tnode* upd,struct tnode* _satements);
 int getReg();
 void freeReg();
 
